@@ -53,6 +53,16 @@
         "ios": "cpp",
         "istream": "cpp",
         "ostream": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "functional": "cpp",
+        "algorithm": "cpp",
+        "condition_variable": "cpp",
+        "iostream": "cpp",
+        "map": "cpp",
+        "optional": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "xhash": "cpp",
+        "xtree": "cpp"
     }
 }
