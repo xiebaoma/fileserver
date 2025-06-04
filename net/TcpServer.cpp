@@ -58,8 +58,6 @@ void TcpServer::start(int workerThreadCount /* = 4*/)
         m_eventLoopThreadPool->init(m_loop, workerThreadCount);
         m_eventLoopThreadPool->start();
 
-        // threadPool_->start(threadInitCallback_);
-        // assert(!acceptor_->listenning());
         m_loop->runInLoop(std::bind(&Acceptor::listen, m_acceptor.get()));
         m_started = 1;
     }
