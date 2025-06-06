@@ -1,4 +1,4 @@
-# Fileserver（开发中）
+# Fileserver
 
 这是一个高性能的文件服务器服务端，能够同时在Windows和Linux系统上运行。
 
