@@ -1,11 +1,3 @@
-/*
- * Author: xiebaoma
- * Date: 2025-06-01
- *
- * Description:
- * implementation of EventLoop class, which is the core of the Reactor pattern.
- */
-
 #include "EventLoop.h"
 
 #include <sstream>
@@ -99,69 +91,43 @@ EventLoop::~EventLoop()
 
 void EventLoop::loop()
 {
-    // Ensure the loop is only run in the thread that owns the EventLoop.
+    // assert(!looping_);
     assertInLoopThread();
-
-    // Mark the loop as running.
     m_looping = true;
-
-    // Reset the quit flag in case it was set previously.
     m_quit = false; // FIXME: what if someone calls quit() before loop() ?
-
-    // Log the start of the event loop.
     LOGD("EventLoop 0x%x  start looping", this);
 
-    // Main event loop.
     while (!m_quit)
     {
-        // Execute due timers.
         m_timerQueue->doTimer();
 
-        // Clear the list of active channels from the last poll.
         m_activeChannels.clear();
-
-        // Poll for I/O events. Timeout is kPollTimeMs. Fill m_activeChannels with ready channels.
         m_pollReturnTime = m_poller->poll(kPollTimeMs, &m_activeChannels);
-
-        // For debugging: print all active channels (if tracing is enabled).
-        // printActiveChannels();
-
-        // Increment the number of completed loop iterations.
+        // if (Logger::logLevel() <= Logger::TRACE)
+        //{
+        printActiveChannels();
+        //}
         ++m_iteration;
-
-        // TODO: sort m_activeChannels by priority if necessary.
-
-        // Mark the start of event handling phase.
+        // TODO sort channel by priority
         m_eventHandling = true;
-
-        // Handle each active channel.
         for (const auto &it : m_activeChannels)
         {
             currentActiveChannel_ = it;
             currentActiveChannel_->handleEvent(m_pollReturnTime);
         }
-
-        // Clear current active channel.
         currentActiveChannel_ = nullptr;
-
-        // Mark the end of event handling.
         m_eventHandling = false;
-
-        // Execute other pending tasks (e.g., scheduled functions).
         doOtherTasks();
 
-        // Call per-frame logic if set (e.g., game loop or UI updates).
         if (m_frameFunctor)
         {
             m_frameFunctor();
         }
     }
 
-    // Log the end of the event loop.
     LOGD("EventLoop 0x%0x stop looping", this);
     m_looping = false;
 
-    // Log thread ID and event loop pointer upon exiting.
     std::ostringstream oss;
     oss << std::this_thread::get_id();
     std::string stid = oss.str();
