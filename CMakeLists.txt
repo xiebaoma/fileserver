@@ -13,7 +13,6 @@ base/Timestamp.cpp
 net/Acceptor.cpp
 net/ByteBuffer.cpp
 net/Channel.cpp
-net/Connector.cpp
 net/EpollPoller.cpp
 net/EventLoop.cpp
 net/EventLoopThread.cpp
